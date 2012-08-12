@@ -281,25 +281,6 @@ int expand_files(struct files_struct *files, int nr)
 
 	fdt = files_fdtable(files);
 
-	/*
-	 * N.B. For clone tasks sharing a files structure, this test
-	 * will limit the total number of files that can be opened.
-	 */
-            if (nr >= rlimit(RLIMIT_NOFILE)) {
-#ifdef CONFIG_SEC_FILE_LEAK_DEBUG
-                printk(KERN_ERR "Too many open files(%d:%s)\n",
-                        current->tgid, current->group_leader->comm);
-
-		fdleak_debug_print(files);
-
-                if (get_sec_debug_level()
-				&& !strcmp(current->group_leader->comm, "system_server"))
-                    panic("Too many open files");
-#endif
-
-		return -EMFILE;
-        }
-
 	/* Do we need to expand? */
 	if (nr < fdt->max_fds)
 		return 0;
@@ -507,6 +488,14 @@ repeat:
 
 	if (fd < fdt->max_fds)
 		fd = find_next_zero_bit(fdt->open_fds, fdt->max_fds, fd);
+
+	/*
+	 * N.B. For clone tasks sharing a files structure, this test
+	 * will limit the total number of files that can be opened.
+	 */
+	error = -EMFILE;
+	if (fd >= end)
+		goto out;
 
 	error = expand_files(files, fd);
 	if (error < 0)
