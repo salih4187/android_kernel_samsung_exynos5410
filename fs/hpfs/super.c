@@ -385,9 +385,11 @@ static int hpfs_remount_fs(struct super_block *s, int *flags, char *data)
 	int o;
 	struct hpfs_sb_info *sbi = hpfs_sb(s);
 	char *new_opts = kstrdup(data, GFP_KERNEL);
-	
+
+	sync_filesystem(s);
+
 	*flags |= MS_NOATIME;
-	
+
 	hpfs_lock(s);
 	lock_super(s);
 	uid = sbi->sb_uid; gid = sbi->sb_gid;
