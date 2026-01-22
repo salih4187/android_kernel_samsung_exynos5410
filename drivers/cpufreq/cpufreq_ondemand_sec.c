@@ -740,7 +740,7 @@ static void dbs_freq_increase(struct cpufreq_policy *p, unsigned int freq)
 
 static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 {
-	unsigned int load = 0;
+	unsigned int max_load_freq;
 	unsigned int tmp;
 
 	struct cpufreq_policy *policy;
@@ -752,15 +752,25 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 
 	/*
 	 * Every sampling_rate, we check, if current idle time is less
-	 * than 20% (default), then we try to increase frequency. Else, we adjust the frequency
-	 * proportional to load.
+	 * than 20% (default), then we try to increase frequency
+	 * Every sampling_rate, we look for a the lowest
+	 * frequency which can sustain the load while keeping idle time over
+	 * 30%. If such a frequency exist, we try to decrease to this frequency.
+	 *
+	 * Any frequency increase takes it to the maximum frequency.
+	 * Frequency reduction happens at minimum steps of
+	 * 5% (default) of current frequency
 	 */
+
+	/* Get Absolute Load - in terms of freq */
+	max_load_freq = 0;
 
 	for_each_cpu(j, policy->cpus) {
 		struct cpu_dbs_info_s *j_dbs_info;
 		cputime64_t cur_wall_time, cur_idle_time, cur_iowait_time;
 		unsigned int idle_time, wall_time, iowait_time;
-		unsigned int load_cpu;
+		unsigned int load, load_freq;
+		int freq_avg;
 
 		j_dbs_info = &per_cpu(od_cpu_dbs_info, j);
 
@@ -809,12 +819,17 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		if (unlikely(!wall_time || wall_time < idle_time))
 			continue;
 
-		load_cpu = 100 * (wall_time - idle_time) / wall_time;
-		if (load_cpu > load)
-			load = load_cpu;
-		
-		cpu_util[j] = load_cpu;
-		cpu_util_sum += load_cpu;
+		load = 100 * (wall_time - idle_time) / wall_time;
+		cpu_util[j] = load;
+		cpu_util_sum += load;
+
+		freq_avg = __cpufreq_driver_getavg(policy, j);
+		if (freq_avg <= 0)
+			freq_avg = policy->cur;
+
+		load_freq = load * freq_avg;
+		if (load_freq > max_load_freq)
+			max_load_freq = load_freq;
 	}
 
 	if (policy->cur < min(dbs_tuners_ins.up_step_level_l, step_level_CA7_max)) {
@@ -822,7 +837,7 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		 * If current freq is under 600MHz, and load freq is bigger than
 		 * up_threshold 60, increase freq by step level 600MHz.
 		 */
-		if (load > dbs_tuners_ins.up_threshold_l) {
+		if (max_load_freq > dbs_tuners_ins.up_threshold_l * policy->cur) {
 			dbs_freq_increase(policy, 
 				min(dbs_tuners_ins.up_step_level_l, step_level_CA7_max));
 			goto exit;
@@ -836,14 +851,14 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		 * Condition 1: current freq is under 1.2GHz, apply step level to 1.2GHz
 		 * Condition 2: current freq is same or over 1.2GHz, increase to max freq.
 		 */
-		if (load > dbs_tuners_ins.up_threshold) {
+		if (max_load_freq > dbs_tuners_ins.up_threshold * policy->cur) {
 			dbs_freq_increase(policy, policy->cur < dbs_tuners_ins.up_step_level_b ?
 					dbs_tuners_ins.up_step_level_b : policy->max);
 
 			goto exit;
 		}
 	} else {
-		if (load > dbs_tuners_ins.up_threshold_h) {
+		if (max_load_freq > dbs_tuners_ins.up_threshold_h * policy->cur) {
 			/* If switching to max speed, apply sampling_down_factor */
 			this_dbs_info->rate_mult =
 				dbs_tuners_ins.sampling_down_factor;
@@ -877,9 +892,10 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		tmp = policy->cur > dbs_tuners_ins.high_freq_zone ?
 				dbs_tuners_ins.up_threshold_h : dbs_tuners_ins.up_threshold;
 
-		if (load < (tmp - dbs_tuners_ins.down_differential)) {
+		if (max_load_freq < (tmp - dbs_tuners_ins.down_differential) * policy->cur) {
 			unsigned int freq_next;
-			freq_next = load * policy->max / 100;
+			freq_next = max_load_freq /
+					(tmp - dbs_tuners_ins.down_differential);
 
 			/* No longer fully busy, reset rate_mult */
 			this_dbs_info->rate_mult = 1;
@@ -902,9 +918,13 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		 * If current freq is same or under 800MHz, and load freq is smaller than
 		 * 40(by 60-20), decrease freq.
 		 */
-		if (load < (dbs_tuners_ins.up_threshold_l - dbs_tuners_ins.down_differ_l)) {
+		if (max_load_freq <
+		    (dbs_tuners_ins.up_threshold_l - dbs_tuners_ins.down_differ_l) *
+		     policy->cur) {
 			unsigned int freq_next;
-			freq_next = load * policy->max / 100;
+			freq_next = max_load_freq /
+					(dbs_tuners_ins.up_threshold_l -
+					 dbs_tuners_ins.down_differ_l);
 
                         /* No longer fully busy, reset rate_mult */
 			this_dbs_info->rate_mult = 1;
