@@ -31,7 +31,6 @@
 #include <linux/sysfs.h>
 #include <linux/cpumask.h>
 #include <linux/fb.h>
-#include <linux/sysfs_helpers.h>
 
 #include <asm/cputype.h>
 #include <asm/bL_switcher.h>
