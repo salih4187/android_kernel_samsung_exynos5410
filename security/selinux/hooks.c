@@ -1,4 +1,4 @@
-/*
+,/*
  *  NSA Security-Enhanced Linux (SELinux) security module
  *
  *  This file contains the SELinux hook function implementations.
@@ -4699,12 +4699,11 @@ static int selinux_nlmsg_perm(struct sock *sk, struct sk_buff *skb)
 				return rc;
 		} else if (rc == -EINVAL) {
 			/* -EINVAL is a missing msg/perm mapping */
-			pr_warn_ratelimited("SELinux: unrecognized netlink"
-				" message: protocol=%hu nlmsg_type=%hu sclass=%s"
-				" pid=%d comm=%s\n",
-				sk->sk_protocol, nlh->nlmsg_type,
-				secclass_map[sclass - 1].name,
-				task_pid_nr(current), current->comm);
+                        printk(KERN_WARNING
+                               "SELinux: unrecognized netlink message:"
+                               " protocol=%hu nlmsg_type=%hu sclass=%s\n",
+                               sk->sk_protocol, nlh->nlmsg_type,
+                               secclass_map[sksec->sclass - 1].name);
 #ifdef CONFIG_ALWAYS_ENFORCE
 			if (security_get_allow_unknown())
 #else
