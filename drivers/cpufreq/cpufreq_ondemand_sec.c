@@ -69,8 +69,6 @@
 #define MIN_FREQUENCY_UP_STEP_LEVEL		(500000)
 #define MAX_FREQUENCY_UP_STEP_LEVEL		B_MAX_FREQ
 
-extern unsigned int step_level_CA7_max;
-
 /*
  * The polling frequency of this governor depends on the capability of
  * the processor. Default polling frequency is 1000 times the transition
@@ -926,14 +924,13 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 #ifdef CONFIG_EXYNOS5_DYNAMIC_CPU_HOTPLUG
 	mutex_lock(&hotplug_mutex);
 #endif
-	if (policy->cur < min(dbs_tuners_ins.up_step_level_l, step_level_CA7_max)) {
+	if (policy->cur < dbs_tuners_ins.up_step_level_l) {
 		/*
 		 * If current freq is under 600MHz, and load freq is bigger than
 		 * up_threshold 60, increase freq by step level 600MHz.
 		 */
 		if (max_load_freq > dbs_tuners_ins.up_threshold_l * policy->cur) {
-			dbs_freq_increase(policy, 
-				min(dbs_tuners_ins.up_step_level_l, step_level_CA7_max));
+			dbs_freq_increase(policy, dbs_tuners_ins.up_step_level_l);
 #ifdef CONFIG_EXYNOS5_DYNAMIC_CPU_HOTPLUG
 			/*
 			 * Hotplug In:
