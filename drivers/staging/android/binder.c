@@ -38,7 +38,6 @@
 #include <linux/vmalloc.h>
 #include <linux/slab.h>
 #include <linux/security.h>
-#include <linux/spinlock.h>
 
 #include "binder.h"
 #include "binder_trace.h"
