@@ -85,7 +85,6 @@ const struct address_space_operations sdcardfs_aops = {
 const struct vm_operations_struct sdcardfs_vm_ops = {
 	.fault		= sdcardfs_fault,
 	.page_mkwrite	= sdcardfs_page_mkwrite,
-	.remap_pages	= generic_file_remap_pages,
 	.open		= sdcardfs_vm_open,
 	.close		= sdcardfs_vm_close,
 };
