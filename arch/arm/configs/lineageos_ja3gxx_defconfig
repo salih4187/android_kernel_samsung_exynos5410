@@ -211,6 +211,7 @@ CONFIG_MSDOS_PARTITION=y
 # CONFIG_KARMA_PARTITION is not set
 CONFIG_EFI_PARTITION=y
 # CONFIG_SYSV68_PARTITION is not set
+CONFIG_BLOCK_SUPPORT_STLOG=y
 
 #
 # IO Schedulers
@@ -703,7 +704,7 @@ CONFIG_SECCOMP=y
 # CONFIG_USE_OF is not set
 CONFIG_ZBOOT_ROM_TEXT=0
 CONFIG_ZBOOT_ROM_BSS=0
-CONFIG_CMDLINE="console=ttySAC2,115200n8 vmalloc=512M androidboot.console=ttySAC2 androidboot.hardware=universal5410 enforcing=0 androidboot.selinux=permissive"
+CONFIG_CMDLINE="console=ttySAC2,115200n8 vmalloc=512M androidboot.console=ttySAC2 androidboot.hardware=universal5410 androidboot.selinux=permissive"
 # CONFIG_CMDLINE_FROM_BOOTLOADER is not set
 CONFIG_CMDLINE_EXTEND=y
 # CONFIG_CMDLINE_FORCE is not set
@@ -1144,6 +1145,7 @@ CONFIG_XPS=y
 # CONFIG_NETPRIO_CGROUP is not set
 CONFIG_BQL=y
 CONFIG_HAVE_BPF_JIT=y
+# CONFIG_BPF_JIT is not set
 
 #
 # Network testing
@@ -1251,7 +1253,7 @@ CONFIG_BLK_DEV_LOOP_MIN_COUNT=8
 # CONFIG_BLK_DEV_UB is not set
 CONFIG_BLK_DEV_RAM=y
 CONFIG_BLK_DEV_RAM_COUNT=60
-CONFIG_BLK_DEV_RAM_SIZE=8192
+CONFIG_BLK_DEV_RAM_SIZE=30720
 # CONFIG_BLK_DEV_XIP is not set
 # CONFIG_CDROM_PKTCDVD is not set
 # CONFIG_ATA_OVER_ETH is not set
@@ -1357,6 +1359,7 @@ CONFIG_SCSI_MULTI_LUN=y
 # CONFIG_SCSI_CONSTANTS is not set
 # CONFIG_SCSI_LOGGING is not set
 # CONFIG_SCSI_SCAN_ASYNC is not set
+CONFIG_SCSI_WAIT_SCAN=m
 
 #
 # SCSI Transports
@@ -1398,7 +1401,7 @@ CONFIG_NET_CORE=y
 # CONFIG_BONDING is not set
 CONFIG_DUMMY=y
 # CONFIG_EQUALIZER is not set
-CONFIG_MII=y
+# CONFIG_MII is not set
 # CONFIG_IFB is not set
 # CONFIG_NET_TEAM is not set
 # CONFIG_MACVLAN is not set
@@ -2343,6 +2346,13 @@ CONFIG_BACKLIGHT_CLASS_DEVICE=y
 # CONFIG_BACKLIGHT_LP855X is not set
 # CONFIG_BACKLIGHT_LP8556 is not set
 # CONFIG_TCON_S6TNDR3X is not set
+
+#
+# Console display driver support
+#
+CONFIG_DUMMY_CONSOLE=y
+# CONFIG_FRAMEBUFFER_CONSOLE is not set
+
 # CONFIG_LOGO is not set
 CONFIG_SOUND=y
 # CONFIG_SOUND_OSS_CORE is not set
