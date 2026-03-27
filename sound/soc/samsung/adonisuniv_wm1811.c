@@ -30,6 +30,7 @@
 #include <mach/regs-clock.h>
 #include <mach/pmu.h>
 #include <mach/gpio.h>
+#include <mach/exynos5-audio.h>
 
 #include <linux/mfd/wm8994/core.h>
 #include <linux/mfd/wm8994/registers.h>
@@ -48,9 +49,8 @@
 
 #define GPIO_MIC_BIAS_EN EXYNOS5410_GPJ1(2)
 
+
 struct wm1811_machine_priv {
-	struct clk *pll;
-	struct clk *clk;
 	struct snd_soc_jack jack;
 	struct snd_soc_codec *codec;
 	struct delayed_work mic_work;
@@ -289,31 +289,19 @@ const struct snd_soc_dapm_route adonisuniv_dapm_routes[] = {
 
 };
 
-static int adonisuniv_wm1811_init_paiftx(struct snd_soc_pcm_runtime *rtd)
+static int adonisuniv_late_probe(struct snd_soc_card *card)
 {
-	struct snd_soc_codec *codec = rtd->codec;
+	struct snd_soc_codec *codec = card->rtd[0].codec;
+	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
+	struct snd_soc_dai *cpu_dai = card->rtd[0].cpu_dai;
 	struct wm1811_machine_priv *wm1811
 		= snd_soc_card_get_drvdata(codec->card);
-	struct snd_soc_dai *aif1_dai = rtd->codec_dai;
 	int ret;
 
-	rtd->codec_dai->driver->playback.channels_max =
-				rtd->cpu_dai->driver->playback.channels_max;
+	codec_dai->driver->playback.channels_max =
+				cpu_dai->driver->playback.channels_max;
 
-	ret = snd_soc_add_codec_controls(codec, adonisuniv_controls,
-					ARRAY_SIZE(adonisuniv_controls));
-
-	ret = snd_soc_dapm_new_controls(&codec->dapm, adonisuniv_dapm_widgets,
-					   ARRAY_SIZE(adonisuniv_dapm_widgets));
-	if (ret != 0)
-		dev_err(codec->dev, "Failed to add DAPM widgets: %d\n", ret);
-
-	ret = snd_soc_dapm_add_routes(&codec->dapm, adonisuniv_dapm_routes,
-					   ARRAY_SIZE(adonisuniv_dapm_routes));
-	if (ret != 0)
-		dev_err(codec->dev, "Failed to add DAPM routes: %d\n", ret);
-
-	ret = snd_soc_dai_set_sysclk(aif1_dai, WM8994_SYSCLK_MCLK1,
+	ret = snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_MCLK1,
 				     ADONISUNIV_DEFAULT_MCLK1, SND_SOC_CLOCK_IN);
 	if (ret < 0)
 		dev_err(codec->dev, "Failed to boot clocking\n");
@@ -339,7 +327,7 @@ static int adonisuniv_wm1811_init_paiftx(struct snd_soc_pcm_runtime *rtd)
 
 	wm1811->codec = codec;
 
-	return snd_soc_dapm_sync(&codec->dapm);
+	return 0;
 }
 
 static struct snd_soc_dai_link adonisuniv_dai[] = {
@@ -351,17 +339,16 @@ static struct snd_soc_dai_link adonisuniv_dai[] = {
 		.platform_name = "samsung-audio",
 		.codec_name = "wm8994-codec",
 		.ops = &adonisuniv_wm1811_aif1_ops,
-		.init = adonisuniv_wm1811_init_paiftx,
 	},
 	{ /* Sec_Fifo DAI i/f */
 		.name = "Sec_FIFO TX",
 		.stream_name = "Sec_Dai",
 		.cpu_dai_name = "samsung-i2s.4",
 		.codec_dai_name = "wm8994-aif1",
-#ifdef CONFIG_SND_SAMSUNG_NORMAL
-		.platform_name = "samsung-audio",
-#else
+#ifdef CONFIG_SND_SAMSUNG_USE_IDMA
 		.platform_name = "samsung-idma",
+#else
+		.platform_name = "samsung-audio",
 #endif
 		.codec_name = "wm8994-codec",
 		.ops = &adonisuniv_wm1811_aif1_ops,
@@ -373,92 +360,71 @@ static struct snd_soc_card adonisuniv = {
 	.name = "AdonisUniv Sound Card",
 	.owner = THIS_MODULE,
 	.dai_link = adonisuniv_dai,
-
 	/* If you want to use sec_fifo device,
 	 * changes the num_link = 2 or ARRAY_SIZE(adonisuniv_dai). */
 	.num_links = ARRAY_SIZE(adonisuniv_dai),
+
+	.controls = adonisuniv_controls,
+	.num_controls = ARRAY_SIZE(adonisuniv_controls),
+	.dapm_widgets = adonisuniv_dapm_widgets,
+	.num_dapm_widgets = ARRAY_SIZE(adonisuniv_dapm_widgets),
+	.dapm_routes = adonisuniv_dapm_routes,
+	.num_dapm_routes = ARRAY_SIZE(adonisuniv_dapm_routes),
+
+	.late_probe = adonisuniv_late_probe,
 };
 
-static struct platform_device *adonisuniv_snd_device;
-
-static int __init adonisuniv_audio_init(void)
+static int __devinit snd_adonisuniv_probe(struct platform_device *pdev)
 {
-	struct wm1811_machine_priv *wm1811;
 	int ret;
+	struct wm1811_machine_priv *wm1811;
 
 	wm1811 = kzalloc(sizeof *wm1811, GFP_KERNEL);
 	if (!wm1811) {
 		pr_err("Failed to allocate memory\n");
-		ret = -ENOMEM;
-		goto err_kzalloc;
+		return -ENOMEM;
 	}
 
-	wm1811->pll = clk_get(NULL, "fout_epll");
-	if (IS_ERR(wm1811->pll)) {
-		pr_err("%s: failed to get fout_epll\n", __func__);
-		goto err_clk_pll_get;
-	}
+	exynos5_audio_set_mclk(1, 0);
 
-	wm1811->clk = clk_get(NULL, "clkout");
-	if (IS_ERR(wm1811->clk)) {
-		pr_err("failed to get clkout\n");
-		ret = PTR_ERR(wm1811->clk);
-		goto err_clk_get;
-	}
-
-	clk_enable(wm1811->clk);
 	snd_soc_card_set_drvdata(&adonisuniv, wm1811);
 
-	adonisuniv_snd_device = platform_device_alloc("soc-audio", -1);
-	if (!adonisuniv_snd_device) {
-		ret = -ENOMEM;
-		goto err_device_alloc;
-	}
-
-	platform_set_drvdata(adonisuniv_snd_device, &adonisuniv);
-
-	ret = platform_device_add(adonisuniv_snd_device);
-	if (ret)
-		goto err_device_add;
-
-#if 0	/* ToDo */
-	ret = snd_soc_register_card(&midas);
-
+	adonisuniv.dev = &pdev->dev;
+	ret = snd_soc_register_card(&adonisuniv);
 	if (ret) {
-		pr_err("snd_soc_register_card failed %d\n", ret);
-		goto err_register_card;
+		dev_err(&pdev->dev, "snd_soc_register_card failed %d\n", ret);
+		kfree(wm1811);
 	}
-#endif
 
 	adonisuniv_gpio_init();
 
 	return ret;
-
-err_device_add:
-	platform_device_put(adonisuniv_snd_device);
-err_device_alloc:
-	clk_disable(wm1811->clk);
-	clk_put(wm1811->clk);
-err_clk_get:
-	clk_put(wm1811->pll);
-err_clk_pll_get:
-	kfree(wm1811);
-err_kzalloc:
-
-	return ret;
 }
-module_init(adonisuniv_audio_init);
 
-static void __exit adonisuniv_audio_exit(void)
+static int __devexit snd_adonisuniv_remove(struct platform_device *pdev)
 {
 	struct snd_soc_card *card = &adonisuniv;
 	struct wm1811_machine_priv *wm1811 = snd_soc_card_get_drvdata(card);
-	platform_device_unregister(adonisuniv_snd_device);
-	clk_put(wm1811->pll);
-	clk_put(wm1811->clk);
+
+	snd_soc_unregister_card(&adonisuniv);
 	kfree(wm1811);
+
+	exynos5_audio_set_mclk(0, 0);
+
+	return 0;
 }
-module_exit(adonisuniv_audio_exit);
+
+static struct platform_driver snd_adonisuniv_driver = {
+	.driver = {
+		.owner = THIS_MODULE,
+		.name = "wm1811-card",
+		.pm = &snd_soc_pm_ops,
+	},
+	.probe = snd_adonisuniv_probe,
+	.remove = __devexit_p(snd_adonisuniv_remove),
+};
+
+module_platform_driver(snd_adonisuniv_driver);
 
 MODULE_AUTHOR("JS. Park <aitdark.park@samsung.com>");
 MODULE_DESCRIPTION("ALSA SoC AdonisUniv WM1811");

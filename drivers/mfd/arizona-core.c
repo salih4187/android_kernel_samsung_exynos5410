@@ -245,6 +245,8 @@ static int arizona_apply_hardware_patch(struct arizona* arizona)
 	unsigned int fll, sysclk;
 	int ret;
 
+	regcache_cache_bypass(arizona->regmap, true);
+
 	/* Cache existing FLL and SYSCLK settings */
 	ret = regmap_read(arizona->regmap, ARIZONA_FLL1_CONTROL_1, &fll);
 	if (ret < 0) {
@@ -314,6 +316,8 @@ err_fll:
 		dev_err(arizona->dev,
 			"Failed to re-apply old FLL settings: %d\n",
 			ret);
+
+	regcache_cache_bypass(arizona->regmap, false);
 	return ret;
 }
 
@@ -398,8 +402,6 @@ static int arizona_suspend(struct device *dev)
 	dev_dbg(arizona->dev, "Suspend, disabling IRQ\n");
 	disable_irq(arizona->irq);
 
-	arizona->irq_sem = 1;
-
 	return 0;
 }
 
@@ -408,10 +410,7 @@ static int arizona_resume(struct device *dev)
 	struct arizona *arizona = dev_get_drvdata(dev);
 
 	dev_dbg(arizona->dev, "Resume, reenabling IRQ\n");
-	if (arizona->irq_sem) {
-		enable_irq(arizona->irq);
-		arizona->irq_sem = 0;
-	}
+	enable_irq(arizona->irq);
 
 	return 0;
 }
@@ -455,7 +454,6 @@ int __devinit arizona_dev_init(struct arizona *arizona)
 
 	dev_set_drvdata(arizona->dev, arizona);
 	mutex_init(&arizona->clk_lock);
-	mutex_init(&arizona->reg_setting_lock);
 
 	if (dev_get_platdata(arizona->dev))
 		memcpy(&arizona->pdata, dev_get_platdata(arizona->dev),

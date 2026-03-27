@@ -25,7 +25,7 @@
 
 #include "mcdriver.h"
 
-#define PRESET_PATH_N	(93)
+#define PRESET_PATH_N	(89)
 /* ========================================
 	Preset Path settings
 	========================================*/
@@ -86,7 +86,11 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		{{0x00000000}, {0x00000000} },	/* asAdc0	*/
 		{{0x00000000} },		/* asAdc1	*/
 		{{MCDRV_ASRC_DAC1_L_ON},
+#ifdef CONFIG_MACH_V1
+		 {MCDRV_ASRC_DAC1_R_ON} },		/* asSp		*/
+#else
 		 {0x00000000} },		/* asSp		*/
+#endif
 		{{MCDRV_ASRC_DAC0_L_ON},
 		 {MCDRV_ASRC_DAC0_R_ON} },	/* asHp		*/
 		{{MCDRV_ASRC_DAC0_L_ON} },	/* asRc		*/
@@ -541,7 +545,11 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		|MCDRV_ASRC_MIC4_ON} },		/* asAdc0	*/
 		{{0x00000000} },		/* asAdc1	*/
 		{{MCDRV_ASRC_DAC1_L_ON},
-		 {0x00000000} },		/* asSp		*/
+#ifdef CONFIG_MACH_V1
+		{MCDRV_ASRC_DAC1_R_ON} },		/* asSp 	*/
+#else
+		{0x00000000} },		/* asSp 	*/
+#endif
 		{{MCDRV_ASRC_DAC0_L_ON},
 		 {MCDRV_ASRC_DAC0_R_ON} },	/* asHp		*/
 		{{MCDRV_ASRC_DAC0_L_ON} },	/* asRc		*/
@@ -637,7 +645,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_D1SRC_AE1_ON},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_ADIF1_ON},
 		 {MCDRV_D1SRC_ADIF1_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -690,7 +699,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_VBOXOUT_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -725,7 +735,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -901,7 +912,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_D1SRC_AE1_ON},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_ADIF1_ON},
 		 {MCDRV_D1SRC_ADIF1_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -955,7 +967,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_VBOXOUT_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -992,7 +1005,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -1183,8 +1197,7 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		{{MCDRV_ASRC_DAC0_L_ON} },	/* asRc		*/
 		{{MCDRV_ASRC_DAC0_L_ON},
 		 {MCDRV_ASRC_DAC0_R_ON} },	/* asLout1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {MCDRV_ASRC_DAC1_R_ON} },	/* asLout2	*/
+		{{0x00000000}, {0x00000000} },	/* asLout2	*/
 		{{0x00000000}, {0x00000000},
 		 {0x00000000}, {0x00000000} }	/* asBias	*/
 	},
@@ -1241,8 +1254,7 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		{{0x00000000}, {0x00000000} },	/* asAe3	*/
 		{{MCDRV_D1SRC_HIFIIN_ON},
 		 {MCDRV_D1SRC_HIFIIN_ON} },	/* asDac0	*/
-		{{MCDRV_D1SRC_HIFIIN_ON},
-		 {MCDRV_D1SRC_HIFIIN_ON} },	/* asDac1	*/
+		{{0x00000000}, {0x00000000} },	/* asDac1	*/
 		{{0x00000000} },		/* asVoiceOut	*/
 		{{0x00000000} },		/* asVboxIoIn	*/
 		{{0x00000000} },		/* asVboxHostIn	*/
@@ -1262,15 +1274,13 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		|MCDRV_ASRC_MIC4_ON
 		|MCDRV_ASRC_LINEIN1_R_ON} },	/* asAdc0	*/
 		{{0x00000000} },		/* asAdc1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {0x00000000} },		/* asSp		*/
+		{{0x00000000}, {0x00000000} },	/* asSp		*/
 		{{MCDRV_ASRC_DAC0_L_ON},
 		 {MCDRV_ASRC_DAC0_R_ON} },	/* asHp		*/
 		{{MCDRV_ASRC_DAC0_L_ON} },	/* asRc		*/
 		{{MCDRV_ASRC_DAC0_L_ON},
 		 {MCDRV_ASRC_DAC0_R_ON} },	/* asLout1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {MCDRV_ASRC_DAC1_R_ON} },	/* asLout2	*/
+		{{0x00000000}, {0x00000000} },	/* asLout2	*/
 		{{0x00000000}, {0x00000000},
 		 {0x00000000}, {0x00000000} }	/* asBias	*/
 	},
@@ -2904,7 +2914,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_D1SRC_AE1_ON},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_ADIF1_ON},
 		 {MCDRV_D1SRC_ADIF1_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -2955,7 +2966,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_VBOXOUT_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -2990,7 +3002,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3165,7 +3178,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_D1SRC_AE1_ON},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_ADIF1_ON},
 		 {MCDRV_D1SRC_ADIF1_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3217,7 +3231,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_VBOXOUT_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3254,7 +3269,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3421,7 +3437,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_D1SRC_AE1_ON},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_ADIF1_ON},
 		 {MCDRV_D1SRC_ADIF1_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3472,7 +3489,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_VBOXOUT_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3508,7 +3526,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3683,7 +3702,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_D1SRC_AE1_ON},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_ADIF1_ON},
 		 {MCDRV_D1SRC_ADIF1_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3736,7 +3756,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_VBOXOUT_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3773,7 +3794,8 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {0x00000000},
 		 {MCDRV_D1SRC_ADIF2_ON},
 		 {0x00000000} },		/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
+		{{0x00000000},
+		 {0x00000000} },	/* asAe0	*/
 		{{MCDRV_D1SRC_EXTIN_ON},
 		 {MCDRV_D1SRC_EXTIN_ON} },	/* asAe1	*/
 		{{0x00000000}, {0x00000000} },	/* asAe2	*/
@@ -3801,146 +3823,6 @@ static const struct MCDRV_PATH_INFO	stPresetPathInfo[PRESET_PATH_N] = {
 		 {MCDRV_ASRC_DAC0_R_ON} },	/* asLout1	*/
 		{{MCDRV_ASRC_DAC1_L_ON},
 		 {MCDRV_ASRC_DAC1_R_ON} },	/* asLout2	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} }	/* asBias	*/
-	},
-	/* playback:audio, capture:audiolb (analog output) */
-	{
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asMusicOut	*/
-		{{0x00000000}, {0x00000000} },	/* asExtOut	*/
-		{{0x00000000} },		/* asHifiOut	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} },	/* asVboxMixIn	*/
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asAe0	*/
-		{{0x00000000}, {0x00000000} },	/* asAe1	*/
-		{{0x00000000}, {0x00000000} },	/* asAe2	*/
-		{{0x00000000}, {0x00000000} },	/* asAe3	*/
-		{{MCDRV_D1SRC_AE0_ON},
-		 {MCDRV_D1SRC_AE0_ON} },	/* asDac0	*/
-		{{MCDRV_D1SRC_AE0_ON},
-		 {MCDRV_D1SRC_AE0_ON} },	/* asDac1	*/
-		{{0x00000000} },		/* asVoiceOut	*/
-		{{0x00000000} },		/* asVboxIoIn	*/
-		{{0x00000000} },		/* asVboxHostIn	*/
-		{{0x00000000} },		/* asHostOut	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif0	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif1	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif2	*/
-		{{0x00000000}, {0x00000000} },	/* asAdc0	*/
-		{{0x00000000} },		/* asAdc1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {0x00000000} },		/* asSp		*/
-		{{MCDRV_ASRC_DAC0_L_ON},
-		 {MCDRV_ASRC_DAC0_R_ON} },	/* asHp		*/
-		{{MCDRV_ASRC_DAC0_L_ON} },	/* asRc		*/
-		{{MCDRV_ASRC_DAC0_L_ON},
-		 {MCDRV_ASRC_DAC0_R_ON} },	/* asLout1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {MCDRV_ASRC_DAC1_R_ON} },	/* asLout2	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} }	/* asBias	*/
-	},
-	/* playback:audio, capture:audiolb (BT output) */
-	{
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asMusicOut	*/
-		{{MCDRV_D1SRC_AE0_ON},
-		 {MCDRV_D1SRC_AE0_ON} },	/* asExtOut	*/
-		{{0x00000000} },		/* asHifiOut	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} },	/* asVboxMixIn	*/
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asAe0	*/
-		{{0x00000000}, {0x00000000} },	/* asAe1	*/
-		{{0x00000000}, {0x00000000} },	/* asAe2	*/
-		{{0x00000000}, {0x00000000} },	/* asAe3	*/
-		{{0x00000000}, {0x00000000} },	/* asDac0	*/
-		{{0x00000000}, {0x00000000} },	/* asDac1	*/
-		{{0x00000000} },		/* asVoiceOut	*/
-		{{0x00000000} },		/* asVboxIoIn	*/
-		{{0x00000000} },		/* asVboxHostIn	*/
-		{{0x00000000} },		/* asHostOut	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif0	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif1	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif2	*/
-		{{0x00000000}, {0x00000000} },	/* asAdc0	*/
-		{{0x00000000} },		/* asAdc1	*/
-		{{0x00000000}, {0x00000000} },	/* asSp		*/
-		{{0x00000000}, {0x00000000} },	/* asHp		*/
-		{{0x00000000} },		/* asRc		*/
-		{{0x00000000}, {0x00000000} },	/* asLout1	*/
-		{{0x00000000}, {0x00000000} },	/* asLout2	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} }	/* asBias	*/
-	},
-	/* playback:audio, capture:audiolb (analog+BT output) */
-	{
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asMusicOut	*/
-		{{MCDRV_D1SRC_AE0_ON},
-		 {MCDRV_D1SRC_AE0_ON} },	/* asExtOut	*/
-		{{0x00000000} },		/* asHifiOut	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} },	/* asVboxMixIn	*/
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asAe0	*/
-		{{0x00000000}, {0x00000000} },	/* asAe1	*/
-		{{0x00000000}, {0x00000000} },	/* asAe2	*/
-		{{0x00000000}, {0x00000000} },	/* asAe3	*/
-		{{MCDRV_D1SRC_AE0_ON},
-		 {MCDRV_D1SRC_AE0_ON} },	/* asDac0	*/
-		{{MCDRV_D1SRC_AE0_ON},
-		 {MCDRV_D1SRC_AE0_ON} },	/* asDac1	*/
-		{{0x00000000} },		/* asVoiceOut	*/
-		{{0x00000000} },		/* asVboxIoIn	*/
-		{{0x00000000} },		/* asVboxHostIn	*/
-		{{0x00000000} },		/* asHostOut	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif0	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif1	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif2	*/
-		{{0x00000000}, {0x00000000} },	/* asAdc0	*/
-		{{0x00000000} },		/* asAdc1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {0x00000000} },		/* asSp		*/
-		{{0x00000000}, {0x00000000} },	/* asHp		*/
-		{{0x00000000} },		/* asRc		*/
-		{{MCDRV_ASRC_DAC0_L_ON},
-		 {MCDRV_ASRC_DAC0_R_ON} },	/* asLout1	*/
-		{{MCDRV_ASRC_DAC1_L_ON},
-		 {MCDRV_ASRC_DAC1_R_ON} },	/* asLout2	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} }	/* asBias	*/
-	},
-	/* playback:audiocp, capture:off */
-	{
-		{{0x00000000}, {0x00000000} },	/* asMusicOut	*/
-		{{MCDRV_D1SRC_MUSICIN_ON},
-		 {MCDRV_D1SRC_MUSICIN_ON} },	/* asExtOut	*/
-		{{0x00000000} },		/* asHifiOut	*/
-		{{0x00000000}, {0x00000000},
-		 {0x00000000}, {0x00000000} },	/* asVboxMixIn	*/
-		{{0x00000000}, {0x00000000} },	/* asAe0	*/
-		{{0x00000000}, {0x00000000} },	/* asAe1	*/
-		{{0x00000000}, {0x00000000} },	/* asAe2	*/
-		{{0x00000000}, {0x00000000} },	/* asAe3	*/
-		{{0x00000000}, {0x00000000} },	/* asDac0	*/
-		{{0x00000000}, {0x00000000} },	/* asDac1	*/
-		{{0x00000000} },		/* asVoiceOut	*/
-		{{0x00000000} },		/* asVboxIoIn	*/
-		{{0x00000000} },		/* asVboxHostIn	*/
-		{{0x00000000} },		/* asHostOut	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif0	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif1	*/
-		{{0x00000000}, {0x00000000} },	/* asAdif2	*/
-		{{0x00000000}, {0x00000000} },	/* asAdc0	*/
-		{{0x00000000} },		/* asAdc1	*/
-		{{0x00000000}, {0x00000000} },	/* asSp		*/
-		{{0x00000000}, {0x00000000} },	/* asHp		*/
-		{{0x00000000} },		/* asRc		*/
-		{{0x00000000}, {0x00000000} },	/* asLout1	*/
-		{{0x00000000}, {0x00000000} },	/* asLout2	*/
 		{{0x00000000}, {0x00000000},
 		 {0x00000000}, {0x00000000} }	/* asBias	*/
 	},
@@ -4011,22 +3893,7 @@ static const int	AnalogPathMapping[PRESET_PATH_N]	= {
 	0, 0, 0, 0, 0, 0,
 	0, 0,
 	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0
+	0, 0, 0, 0
 };
 static const struct MCDRV_PATH_INFO	BtInputPath[]	= {
 	{
@@ -4082,22 +3949,7 @@ static const int	BtPathMapping[PRESET_PATH_N]		= {
 	0, 0, 0, 0, 0, 0,
 	0, 0,
 	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0
+	0, 0, 0, 0
 };
 static const struct MCDRV_PATH_INFO	DtmfPath[]	= {
 	{
@@ -4152,22 +4004,7 @@ static const int	DtmfPathMapping[PRESET_PATH_N]	= {
 	0, 0, 0, 0, 0, 0,
 	0, 0,
 	0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0, 0, 0,
-	0
+	0, 0, 0, 0
 };
 
 #endif

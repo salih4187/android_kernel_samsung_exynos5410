@@ -1,12 +1,12 @@
 /****************************************************************************
  *
- *	Copyright(c) 2012-2013 Yamaha Corporation. All rights reserved.
+ *	Copyright(c) 2012 Yamaha Corporation. All rights reserved.
  *
  *	Module		: mcdefs.h
  *
  *	Description	: MC Device Definitions
  *
- *	Version		: 2.0.0	2013.03.06
+ *	Version		: 1.0.1	2012.12.18
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.	In no event will the authors be held liable for any damages
@@ -58,7 +58,8 @@
 #define	MCB_RST_M			(0x04)
 #define	MCB_RST_F			(0x02)
 #define	MCB_RST_C			(0x01)
-#define	MCI_RST_DEF			(MCB_PSW_M|MCB_RST_M	\
+#define	MCI_RST_DEF			(MCB_PSW_S|MCB_RST_S	\
+					|MCB_PSW_M|MCB_RST_M	\
 					|MCB_PSW_F|MCB_RST_F	\
 					|MCB_PSW_C|MCB_RST_C)
 
@@ -244,7 +245,7 @@ W/R	|                          E_REG_D[7:0]                         |
 	    7       6       5       4       3       2       1       0
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 W/R	|       EDSP_FW_PAGE[2:0]       |  "0"  |  "0"  |  "0"  |EDSP_FW|
-	|                               |       |       |       | _A[8] |
+        |                               |       |       |       | _A[8] |
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 */
 
@@ -293,7 +294,7 @@ W/R	|                        EDSP_FW_D[7:0]                         |
 	    7       6       5       4       3       2       1       0
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 W/R	|  "0"  |  "0"  | EE2DSP| EE2DSP|  "0"  |  "0"  | EE1DSP| EE1DSP|
-	|       |       |  _OV  |  _STA |       |       |   _OV |  _STA |
+        |       |       |  _OV  |  _STA |       |       |   _OV |  _STA |
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 */
 
@@ -309,7 +310,7 @@ W/R	|  "0"  |  "0"  | EE2DSP| EE2DSP|  "0"  |  "0"  | EE1DSP| EE1DSP|
 	    7       6       5       4       3       2       1       0
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 W/R	|  "0"  |  "0"  | E2DSP | E2DSP |  "0"  |  "0"  | E1DSP | E1DSP |
-	|       |       |  _OV  |  _STA |       |       |   _OV |  _STA |
+        |       |       |  _OV  |  _STA |       |       |   _OV |  _STA |
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 */
 
@@ -482,7 +483,7 @@ W/R	|DSPTREQ|  "0"  |  "0"  |  "0"  |  "0"  |  "0"  |  "0"  |  "0"  |
 
 /*	IF_ADR = #57: IENB
 
-	    7       6       5       4       3       2       1       0
+       	    7       6       5       4       3       2       1       0
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 W/R	| IESERR|  "0"  | IEAMT | IEAMT |           IEFW[3:0]           |
 	|       |       |  BEG  |  END  |                               |
@@ -502,7 +503,7 @@ W/R	| IESERR|  "0"  | IEAMT | IEAMT |           IEFW[3:0]           |
 
 /*	A_ADR = #58: IReq
 
-	    7       6       5       4       3       2       1       0
+      	    7       6       5       4       3       2       1       0
 	+-------+-------+-------+-------+-------+-------+-------+-------+
 W/R	| IRSERR|  "0"  | IRAMT | IRAMT |           IRFW[3:0]           |
 	|       |       |  BEG  |  END  |                               |
@@ -964,8 +965,6 @@ W/R	| IRSERR|  "0"  | IRAMT | IRAMT |           IRFW[3:0]           |
 
 #define	MCI_LP0_START			(10)
 #define	MCB_LP0_TIM_START		(0x80)
-#define	MCB_LPR0_STOP_EN		(0x20)
-#define	MCB_LPT0_STOP_EN		(0x10)
 #define	MCB_LPR0_START_SRC		(0x08)
 #define	MCB_LPR0_START			(0x04)
 #define	MCB_LPT0_START_SRC		(0x02)
@@ -998,8 +997,6 @@ W/R	| IRSERR|  "0"  | IRAMT | IRAMT |           IRFW[3:0]           |
 
 #define	MCI_LP1_START			(26)
 #define	MCB_LP1_TIM_START		(0x80)
-#define	MCB_LPR1_STOP_EN		(0x20)
-#define	MCB_LPT1_STOP_EN		(0x10)
 #define	MCB_LPR1_START_SRC		(0x08)
 #define	MCB_LPR1_START			(0x04)
 #define	MCB_LPT1_START_SRC		(0x02)
@@ -1032,8 +1029,6 @@ W/R	| IRSERR|  "0"  | IRAMT | IRAMT |           IRFW[3:0]           |
 
 #define	MCI_LP2_START			(42)
 #define	MCB_LP2_TIM_START		(0x80)
-#define	MCB_LPR2_STOP_EN		(0x20)
-#define	MCB_LPT2_STOP_EN		(0x10)
 #define	MCB_LPR2_START_SRC		(0x08)
 #define	MCB_LPR2_START			(0x04)
 #define	MCB_LPT2_START_SRC		(0x02)
@@ -1058,9 +1053,7 @@ W/R	| IRSERR|  "0"  | IRAMT | IRAMT |           IRFW[3:0]           |
 
 #define	MCI_LP3_START			(58)
 #define	MCB_LP3_TIM_START		(0x80)
-#define	MCB_LPR3_STOP_EN		(0x08)
 #define	MCB_LPR3_START			(0x04)
-#define	MCB_LPT3_STOP_EN		(0x02)
 #define	MCB_LPT3_START			(0x01)
 
 #define	MCI_T_DPLL_FAST			(85)

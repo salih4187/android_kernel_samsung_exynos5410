@@ -44,11 +44,7 @@ static int adonisuniv_hifi_hw_params(struct snd_pcm_substream *substream,
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
 	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-	int bckfs, ret;
-
-
-	bckfs = (params_format(params) == SNDRV_PCM_FORMAT_S24_LE) ?
-					MC_ASOC_LRCK_X48 : MC_ASOC_LRCK_X32;
+	int ret;
 
 	/* Set the codec DAI configuration */
 	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S
@@ -64,7 +60,8 @@ static int adonisuniv_hifi_hw_params(struct snd_pcm_substream *substream,
 	if (ret < 0)
 		return ret;
 
-	ret = snd_soc_dai_set_clkdiv(codec_dai, MC_ASOC_BCLK_MULT, bckfs);
+	ret = snd_soc_dai_set_clkdiv(codec_dai, MC_ASOC_BCLK_MULT,
+				MC_ASOC_LRCK_X32);
 
 	if (ret < 0)
 		return ret;

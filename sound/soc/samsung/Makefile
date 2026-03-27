@@ -78,3 +78,4 @@ obj-$(CONFIG_SND_SOC_ADONISDUOS_YMU831) += snd-soc-adonisduos-ymu831.o
 obj-$(CONFIG_SND_SOC_ADONISUNIV_YMU831) += snd-soc-adonisuniv-ymu831.o
 obj-$(CONFIG_SND_SOC_ADONISUNIV_WM1811_SLSI) += snd-soc-adonisuniv-wm1811-slsi.o
 obj-$(CONFIG_SND_SOC_ADONISUNIV_YMU831_SLSI) += snd-soc-adonisuniv-ymu831-slsi.o
+obj-$(CONFIG_SND_SOC_V1_YMU831) += snd-soc-adonisuniv-ymu831.o
