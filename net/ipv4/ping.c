@@ -941,7 +941,7 @@ int ping_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	}
 
 	err = copied;
-
+	}
 done:
 	skb_free_datagram(sk, skb);
 out:
