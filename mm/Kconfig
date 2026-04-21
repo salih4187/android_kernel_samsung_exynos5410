@@ -449,9 +449,9 @@ config FRONTSWAP
 
 	  If unsure, say Y to enable frontswap.
 
-config ZSMALLOC_NEW
+config ZSMALLOC
 	tristate "Memory allocator for compressed pages"
-	depends on !ZSMALLOC
+	depends on MMU
 	default n
 	help
 	  zsmalloc is a slab-based memory allocator designed to store
